@@ -7,7 +7,8 @@ import fr.communication.domain.OperationType;
 import fr.communication.domain.dto.AccountDto;
 import fr.communication.repository.MicroComRepository;
 import fr.communication.repository.OperationRepository;
-import fr.communication.utils.NoSuchAccountException;
+import fr.communication.utils.NoSuchResourceException;
+import fr.communication.utils.NoSuchResourceException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -32,9 +33,9 @@ public class OperationService {
      * debits the specified amount on the specified account
      * @param accountId the account identifier
      * @param amount the amount of the transaction
-     * @throws NoSuchAccountException
+     * @throws NoSuchResourceException
      */
-    public AccountDto doWithdrawal(long accountId, long amount) throws NoSuchAccountException {
+    public AccountDto doWithdrawal(long accountId, long amount) throws NoSuchResourceException {
         Operation operation = createAndPerformOperation(accountId,amount,OperationType.WITHDRAWAL);
         MicroCom MicroCom = MicroComRepository.findById(accountId).get();
         MicroCom.getOperations().add(operation);
@@ -46,9 +47,9 @@ public class OperationService {
      * deposit the specified amount into the specified account
      * @param accountId the account identifier
      * @param amount the amount of the transaction
-     * @throws NoSuchAccountException
+     * @throws NoSuchResourceException
      */
-    public AccountDto doDeposit(long accountId, long amount) throws NoSuchAccountException {
+    public AccountDto doDeposit(long accountId, long amount) throws NoSuchResourceException {
         Operation operation = createAndPerformOperation(accountId,amount,OperationType.DEPOSIT);
         MicroCom MicroCom = MicroComRepository.findById(accountId).get();
         MicroCom.getOperations().add(operation);
@@ -62,13 +63,13 @@ public class OperationService {
      * @param amount the amount of the transaction
      * @param operationType the transaction type(debit or credit)
      * @return newly created operation
-     * @throws NoSuchAccountException
+     * @throws NoSuchResourceException
      */
       @VisibleForTesting
-      Operation createAndPerformOperation(long accountId, long amount, OperationType operationType) throws NoSuchAccountException {
+      Operation createAndPerformOperation(long accountId, long amount, OperationType operationType) throws NoSuchResourceException {
         Optional<MicroCom> optionalMicroCom = MicroComRepository.findById(accountId);
         if(!optionalMicroCom.isPresent()){
-            throw new NoSuchAccountException(": "+accountId);
+            throw new NoSuchResourceException(": "+accountId);
         }
         MicroCom account = optionalMicroCom.get();
         int opType = operationType.equals(OperationType.WITHDRAWAL) ? -1 : 1;

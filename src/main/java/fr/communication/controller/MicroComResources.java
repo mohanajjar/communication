@@ -6,7 +6,7 @@ import fr.communication.domain.dto.AccountDto;
 import fr.communication.domain.dto.OperationCommand;
 import fr.communication.service.MicroComService;
 import fr.communication.service.OperationService;
-import fr.communication.utils.NoSuchAccountException;
+import fr.communication.utils.NoSuchResourceException;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +30,7 @@ public class MicroComResources {
             @ApiResponse(code = 404, message = "Bad request"),
     })
     @GetMapping("{accountId}")
-    public AccountDto printAccountState(@PathVariable long accountId) throws NoSuchAccountException {
+    public AccountDto printAccountState(@PathVariable long accountId) throws NoSuchResourceException {
         return MicroComService.printStatement(accountId);
     }
 
@@ -40,7 +40,7 @@ public class MicroComResources {
             @ApiResponse(code = 404, message = "Bad request"),
     })
     @GetMapping("{accountId}/history")
-    public List<Operation> showOperationsList(@PathVariable long accountId) throws NoSuchAccountException {
+    public List<Operation> showOperationsList(@PathVariable long accountId) throws NoSuchResourceException {
         return MicroComService.listAllOperations(accountId);
     }
 
@@ -52,7 +52,7 @@ public class MicroComResources {
     })
     @PutMapping(value = "{accountId}/deposit")
     public AccountDto deposit(@PathVariable long accountId,
-                        @RequestBody OperationCommand operationCommand) throws NoSuchAccountException {
+                        @RequestBody OperationCommand operationCommand) throws NoSuchResourceException {
        return operationService.doDeposit(accountId,operationCommand.getAmount());
     }
 
@@ -64,7 +64,7 @@ public class MicroComResources {
     })
     @PutMapping(value = "{accountId}/withdrawal")
     public AccountDto withdrawal(@PathVariable long accountId,
-                           @RequestBody OperationCommand operationCommand) throws NoSuchAccountException {
+                           @RequestBody OperationCommand operationCommand) throws NoSuchResourceException {
         return operationService.doWithdrawal(accountId,operationCommand.getAmount());
     }
 }

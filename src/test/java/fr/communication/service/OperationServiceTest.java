@@ -7,7 +7,7 @@ import fr.communication.domain.OperationType;
 import fr.communication.domain.dto.AccountDto;
 import fr.communication.repository.MicroComRepository;
 import fr.communication.repository.OperationRepository;
-import fr.communication.utils.NoSuchAccountException;
+import fr.communication.utils.NoSuchResourceException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,16 +51,16 @@ public class OperationServiceTest {
         operation = new Operation(Instant.now(), OperationType.DEPOSIT,10000, null);
     }
 
-    @Test(expected = NoSuchAccountException.class)
-    public void createAndPerformOperation_should_throw_NoSuchAccountException() throws NoSuchAccountException {
+    @Test(expected = NoSuchResourceException.class)
+    public void createAndPerformOperation_should_throw_NoSuchResourceException() throws NoSuchResourceException {
         when(MicroComRepository.findById(anyLong())).thenReturn(Optional.empty());
         operationService.createAndPerformOperation(12L,0,OperationType.WITHDRAWAL);
-        Assert.fail("should have thrown NoSuchAccountException ");
+        Assert.fail("should have thrown NoSuchResourceException ");
 
     }
 
     @Test
-    public void createAndPerformOperation_should_perform_deposit() throws NoSuchAccountException {
+    public void createAndPerformOperation_should_perform_deposit() throws NoSuchResourceException {
         when(MicroComRepository.findById(anyLong())).thenReturn(Optional.of(account));
         long currentAccountBalance = account.getBalance();
         Operation operation = operationService.createAndPerformOperation(12L,1000,OperationType.DEPOSIT);
@@ -71,7 +71,7 @@ public class OperationServiceTest {
     }
 
     @Test
-    public void createAndPerformOperation_should_perform_withdrawal() throws NoSuchAccountException {
+    public void createAndPerformOperation_should_perform_withdrawal() throws NoSuchResourceException {
         when(MicroComRepository.findById(anyLong())).thenReturn(Optional.of(account));
         long currentAccountBalance = account.getBalance();
         Operation operation = operationService.createAndPerformOperation(12L,5000,OperationType.WITHDRAWAL);
@@ -81,16 +81,16 @@ public class OperationServiceTest {
         assertThat(operation.getAccount().getBalance()).isEqualTo(currentAccountBalance-5000);
     }
 
-    @Test(expected = NoSuchAccountException.class)
-    public void doDeposit_should_throw_NoSuchAccountException() throws NoSuchAccountException {
+    @Test(expected = NoSuchResourceException.class)
+    public void doDeposit_should_throw_NoSuchResourceException() throws NoSuchResourceException {
         when(MicroComRepository.findById(anyLong())).thenReturn(Optional.empty());
         operationService.doDeposit(12L,1200);
-        Assert.fail("should have thrown NoSuchAccountException ");
+        Assert.fail("should have thrown NoSuchResourceException ");
     }
 
 
     @Test
-    public void doDeposit_should_perform_deposit_and_save_op() throws NoSuchAccountException {
+    public void doDeposit_should_perform_deposit_and_save_op() throws NoSuchResourceException {
         when(MicroComRepository.findById(anyLong())).thenReturn(Optional.of(account));
         when(accountDtoMapper.mapEntityToDto(any(MicroCom.class))).thenCallRealMethod();
         when(operationRepository.save(any(Operation.class))).thenReturn(operation);
@@ -102,15 +102,15 @@ public class OperationServiceTest {
         assertThat(dto.getBalance()).isEqualTo(currentAccountBalance+1200);
     }
 
-    @Test(expected = NoSuchAccountException.class)
-    public void doWithdrawal_should_throw_NoSuchAccountException() throws NoSuchAccountException {
+    @Test(expected = NoSuchResourceException.class)
+    public void doWithdrawal_should_throw_NoSuchResourceException() throws NoSuchResourceException {
         when(MicroComRepository.findById(anyLong())).thenReturn(Optional.empty());
         operationService.doWithdrawal(12L,1200);
-        Assert.fail("should have thrown NoSuchAccountException ");
+        Assert.fail("should have thrown NoSuchResourceException ");
     }
 
     @Test
-    public void doWithdrawal_should_perform_withdrawal_and_save_op() throws NoSuchAccountException {
+    public void doWithdrawal_should_perform_withdrawal_and_save_op() throws NoSuchResourceException {
         when(MicroComRepository.findById(anyLong())).thenReturn(Optional.of(account));
         when(accountDtoMapper.mapEntityToDto(any(MicroCom.class))).thenCallRealMethod();
         when(operationRepository.save(any(Operation.class))).thenReturn(operation);

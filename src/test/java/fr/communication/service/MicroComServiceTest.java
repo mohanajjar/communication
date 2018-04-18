@@ -6,7 +6,7 @@ import fr.communication.domain.Operation;
 import fr.communication.domain.OperationType;
 import fr.communication.domain.dto.AccountDto;
 import fr.communication.repository.MicroComRepository;
-import fr.communication.utils.NoSuchAccountException;
+import fr.communication.utils.NoSuchResourceException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,16 +50,16 @@ public class MicroComServiceTest {
         account.setOperations(operations);
     }
 
-    @Test(expected = NoSuchAccountException.class)
+    @Test(expected = NoSuchResourceException.class)
     public void listAllOperations_should_throw_exception_for_no_such_account() throws Exception {
         when(MicroComRepository.findById(anyLong())).thenReturn(Optional.empty());
         MicroComService.listAllOperations(12L);
-        Assert.fail("should have thrown NoSuchAccountException ");
+        Assert.fail("should have thrown NoSuchResourceException ");
     }
 
 
     @Test
-    public void listAllOperations_should_successfully_return_all_account_operations() throws NoSuchAccountException {
+    public void listAllOperations_should_successfully_return_all_account_operations() throws NoSuchResourceException {
         when(MicroComRepository.findById(12L)).thenReturn(Optional.of(account));
         when(accountDtoMapper.mapEntityToDto(any(MicroCom.class))).thenCallRealMethod();
         List<Operation> operations = MicroComService.listAllOperations(12L);
@@ -67,15 +67,15 @@ public class MicroComServiceTest {
         assertThat(operations).hasSize(1);
     }
 
-    @Test(expected = NoSuchAccountException.class)
-    public void printStatement_should_throw_exception_for_no_such_account() throws NoSuchAccountException {
+    @Test(expected = NoSuchResourceException.class)
+    public void printStatement_should_throw_exception_for_no_such_account() throws NoSuchResourceException {
         when(MicroComRepository.findById(anyLong())).thenReturn(Optional.empty());
         MicroComService.printStatement(12L);
-        Assert.fail("should have thrown NoSuchAccountException ");
+        Assert.fail("should have thrown NoSuchResourceException ");
     }
 
     @Test
-    public void printStatement_should_successfully_return_current_account_balance() throws NoSuchAccountException {
+    public void printStatement_should_successfully_return_current_account_balance() throws NoSuchResourceException {
         when(MicroComRepository.findById(anyLong())).thenReturn(Optional.of(account));
         when(accountDtoMapper.mapEntityToDto(any(MicroCom.class))).thenCallRealMethod();
         AccountDto accountDto = MicroComService.printStatement(12L);

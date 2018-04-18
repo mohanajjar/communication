@@ -15,15 +15,15 @@ import static springfox.documentation.builders.PathSelectors.regex;
 @EnableSwagger2
 public class SwaggerConfiguration {
 
-        @Bean
-        public Docket productApi() {
-            return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo())
-                    .select()
-                    .apis(RequestHandlerSelectors.basePackage("fr.communication.controller"))
-                    .paths(regex("/api.*"))
-                    .build();
+    @Bean
+    public Docket productApi() {
+        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo())
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("fr.communication.controller"))
+                .paths(regex("/api.*"))
+                .build();
 
-        }
+    }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title("Simple microservice API")
